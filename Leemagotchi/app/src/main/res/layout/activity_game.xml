@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mainLayout"
+    android:background="@color/grey">
+
+    <TextView
+        android:id="@+id/txt_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="ZENMAGOTCHI"
+        android:textColor="@color/blood"
+        android:textSize="48sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="215dp"
+        android:layout_height="165dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/btn_bg"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/main_image"
+        app:layout_constraintStart_toStartOf="@+id/main_image"
+        app:layout_constraintTop_toBottomOf="@+id/main_image">
+
+        <TextView
+            android:id="@+id/statsLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+
+            android:text="Happy:\nHunger:\nDiscipline:\nTraining:\nLevel:"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/statsView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="200/200 \n200/200 \n200/200 \n0/100: \n0        "
+            android:textSize="20sp" />
+    </LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/main_image"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:background="@drawable/square_bg"
+        android:padding="5dp"
+        android:backgroundTint="@color/darkRed"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="17dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/zenhappy"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_status" />
+
+    <Button
+        android:id="@+id/foodSelect"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="17dp"
+        android:backgroundTint="@color/blood"
+        android:padding="0dp"
+        android:text=":"
+        android:textColor="@color/darkRed"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/linearLayout3" />
+
+    <Button
+        android:id="@+id/trainSelect"
+        android:layout_width="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:backgroundTint="@color/blood"
+        android:padding="0dp"
+        android:text=":"
+        android:textColor="@color/darkRed"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/foodSelect"
+        app:layout_constraintTop_toBottomOf="@+id/foodSelect" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toStartOf="@+id/foodSelect"
+        app:layout_constraintTop_toTopOf="@+id/main_image">
+
+        <ImageButton
+            android:id="@+id/btn_feed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/jellybean" />
+
+        <ImageButton
+            android:id="@+id/btn_train"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/controller" />
+
+        <ImageButton
+            android:id="@+id/btn_scold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/scold" />
+
+        <ImageButton
+            android:id="@+id/btn_toilet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/poop" />
+
+        <ImageButton
+            android:id="@+id/btn_shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/shopping" />
+
+        <ImageButton
+            android:id="@+id/btn_kill"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/btn_bg"
+            android:padding="5dp"
+            android:src="@drawable/kill" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_status"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="Status message."
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="@+id/txt_title"
+        app:layout_constraintStart_toStartOf="@+id/txt_title"
+        app:layout_constraintTop_toBottomOf="@+id/txt_title" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="@+id/linearLayout2"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout2"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Hunger"
+                android:textAlignment="center"
+                android:textSize="17dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/incHunger"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="+"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+
+            <Button
+                android:id="@+id/decHunger"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Discipline"
+                android:textAlignment="center"
+                android:textSize="17dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/incDisc"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="+"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+
+            <Button
+                android:id="@+id/decDisc"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Training"
+                android:textAlignment="center"
+                android:textSize="17dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/incTrain"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="+"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+
+            <Button
+                android:id="@+id/decTrain"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:text="Coins"
+                android:textAlignment="center"
+                android:textSize="17dp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/incCoin"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="+"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+
+            <Button
+                android:id="@+id/decCoin"
+                android:layout_width="50dp"
+                android:layout_height="35dp"
+                android:layout_marginHorizontal="10dp"
+                android:background="@drawable/btn_bg"
+                android:paddingStart="15dp"
+                android:paddingTop="-50dp"
+                android:text="-"
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                app:backgroundTint="@color/blood" />
+        </TableRow>
+    </TableLayout>
+
+    <TextView
+        android:id="@+id/coins"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="100"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/coinImg"
+        app:layout_constraintTop_toTopOf="@id/coinImg" />
+
+    <ImageView
+        android:id="@+id/coinImg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/coin"
+        android:layout_marginStart="2dp"
+        android:layout_marginTop="2dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

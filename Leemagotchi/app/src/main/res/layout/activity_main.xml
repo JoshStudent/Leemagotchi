@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="Welcome! Please Select Your Creatura to Begin :)"
+        android:textAlignment="center"
+        android:textColor="@color/blood"
+        android:textSize="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btn_lee"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:text="Lee"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/blood"
+        app:layout_constraintEnd_toStartOf="@+id/btn_dana"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_dana" />
+
+    <Button
+        android:id="@+id/btn_dana"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/btn_bg"
+        android:text="Dana"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/blood"
+        app:layout_constraintEnd_toEndOf="@+id/dana_image"
+        app:layout_constraintStart_toStartOf="@+id/dana_image"
+        app:layout_constraintTop_toBottomOf="@+id/dana_image" />
+
+    <Button
+        android:id="@+id/btn_zen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_bg"
+        android:text="Zen"
+        android:textColor="@color/black"
+        app:backgroundTint="@color/blood"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_dana"
+        app:layout_constraintTop_toTopOf="@+id/btn_dana" />
+
+    <ImageView
+        android:id="@+id/dana_image"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/square_bg"
+        android:padding="5dp"
+        android:backgroundTint="@color/darkRed"
+        android:scaleType="fitCenter"
+        android:src="@drawable/danahappy"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/square_bg"
+        android:padding="5dp"
+        android:backgroundTint="@color/darkRed"
+        android:scaleType="fitCenter"
+        android:src="@drawable/leehappy"
+        app:layout_constraintBottom_toBottomOf="@+id/dana_image"
+        app:layout_constraintEnd_toStartOf="@+id/dana_image"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dana_image" />
+
+    <ImageView
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:background="@drawable/square_bg"
+        android:padding="5dp"
+        android:backgroundTint="@color/darkRed"
+        android:scaleType="fitCenter"
+        android:src="@drawable/zenhappy"
+        app:layout_constraintBottom_toBottomOf="@+id/dana_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/dana_image"
+        app:layout_constraintTop_toTopOf="@+id/dana_image"
+        app:layout_constraintVertical_bias="0.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

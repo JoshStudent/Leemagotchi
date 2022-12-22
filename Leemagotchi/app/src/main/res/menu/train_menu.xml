@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/opTrain1"
+        android:title="Game Device"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/opTrain2"
+        android:title="Desert"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/opTrain3"
+        android:title="Choker"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/opTrain4"
+        android:title="Epic Meme"
+        app:showAsAction="ifRoom"
+        />
+</menu>

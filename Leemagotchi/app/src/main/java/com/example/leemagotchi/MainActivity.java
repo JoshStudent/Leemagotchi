@@ -1,15 +1,18 @@
 package com.example.leemagotchi;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn_zen, btn_dana, btn_lee;
+    Button btn_zen, btn_dana, btn_lee, btn_help;
     TextView mainText;
 
     @Override
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_zen.setOnClickListener(this);
         btn_dana = (Button) findViewById(R.id.btn_dana);
         btn_dana.setOnClickListener(this);
+        btn_help = (Button) findViewById(R.id.help);
+        btn_help.setOnClickListener(this);
 
         mainText = (TextView) findViewById(R.id.textView);
 
@@ -45,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case (R.id.btn_dana):
                 startGame("dana");
+                break;
+            case (R.id.help):
+                help();
         }
     }
 
@@ -52,6 +60,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intentGame = new Intent(this, GameActivity.class);
         intentGame.putExtra("choice", choice);
         startActivity(intentGame);
+    }
+
+    public void help(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Uhmmmm");
+        builder.setMessage("You noob??");
+        builder.setCancelable(true);
+        builder.setPositiveButton("ye :(", (DialogInterface.OnClickListener) (dialog, which) -> {
+            Toast.makeText(MainActivity.this, "LOL NOOB!!", Toast.LENGTH_SHORT).show();
+            dialog.cancel();
+        });
+        // Create the Alert dialog
+        AlertDialog alertDialog = builder.create();
+        // Show the Alert Dialog box
+        alertDialog.show();
     }
 
 }

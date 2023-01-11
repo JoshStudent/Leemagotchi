@@ -9,6 +9,12 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 public class DeathActivity extends AppCompatActivity implements View.OnClickListener {
     Button btn_restart;
     ImageView mainImg;
@@ -29,20 +35,29 @@ public class DeathActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = getIntent();
         type = (String)getIntent().getSerializableExtra("choice");
 
+        //Compare birth and death date to see how long the pet lasted for
+        DBHandler db = new DBHandler(this);
         String name = type.substring(0,1).toUpperCase() + type.substring(1).toLowerCase();
-        String status = "Your " + name + " lasted for x days.";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
+        String lDate = db.getColumnLastUpdate();
+        String cDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(new Date());
+        LocalDateTime d1 = LocalDateTime.parse(lDate, formatter);
+        LocalDateTime d2 = LocalDateTime.parse(cDate, formatter);
+        long dayDiff = ChronoUnit.DAYS.between(d1, d2);
+        String status = "Your " + name + " lasted for " + dayDiff + " days.";
         txt_status.setText(status);
 
-        DBHandler db = new DBHandler(this);
         int happy = db.getColumnHappy();
         int level = db.getColumnLevel();
         int hunger = db.getColumnHunger();
+        int maxHunger = db.getColumnMaxHunger();
         int discipline = db.getColumnDiscipline();
+        int maxDiscipline = db.getColumnMaxDiscipline();
         int training = db.getColumnTraining();
         int needXp = db.getColumnNeedXp();
-        String stats = happy + "/200\n" +
-                hunger + "/200\n" +
-                discipline + "/200\n" +
+        String stats = happy + "\n" +
+                hunger + "/" + maxHunger + "\n" +
+                discipline + "/" + maxDiscipline + "\n" +
                 training + "/" + needXp +"\n" +
                 level;
         txt_stats.setText(stats);

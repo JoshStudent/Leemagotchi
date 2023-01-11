@@ -86,6 +86,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyFood();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought a jelly bean!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 
@@ -94,6 +96,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyBigFood();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought some McNuggets!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 
@@ -102,6 +106,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyGaming();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought a gaming device!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 
@@ -110,6 +116,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyDesert();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought some cake!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 
@@ -118,6 +126,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyChoker();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought a choker!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 
@@ -126,6 +136,8 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         boolean attempt = idb.buyMeme();
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
+        else
+            Toast.makeText(ShopActivity.this, "You bought an epic meme!", Toast.LENGTH_SHORT).show();
         displayCoins();
     }
 }

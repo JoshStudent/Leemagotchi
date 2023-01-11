@@ -1,7 +1,14 @@
 package com.example.leemagotchi;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuInflater;
@@ -14,20 +21,25 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
+
 public class GameActivity extends AppCompatActivity implements View.OnClickListener {
-    Button btn_selFood, btn_selTrain;
+    Button btn_selFood, btn_selTrain, btn_update;
     ImageButton btn_feed, btn_train, btn_scold, btn_toilet, btn_shop, btn_kill;
     ImageView mainImg;
-    TextView txt_title, txt_status, txt_stats, txt_coins;
+    TextView txt_title, txt_status, txt_stats, txt_coins, time;
     View mainView;
     String type, food, train;
-    boolean doingBad;
     boolean alive;
     int sfood = 1;
     int strain = 1;
 
     // Admin
-    Button inc_hung, dec_hung, inc_disc, dec_disc, inc_train, dec_train, inc_coins, dec_coins;
+    //Button inc_hung, dec_hung, inc_disc, dec_disc, inc_train, dec_train, inc_coins, dec_coins;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +64,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         btn_selFood.setOnClickListener(this);
         btn_selTrain = (Button) findViewById(R.id.trainSelect);
         btn_selTrain.setOnClickListener(this);
+        btn_update = (Button) findViewById(R.id.update);
+        btn_update.setOnClickListener(this);
 
-        inc_hung = (Button) findViewById(R.id.incHunger);
+        /*inc_hung = (Button) findViewById(R.id.incHunger);
         inc_hung.setOnClickListener(this);
         dec_hung = (Button) findViewById(R.id.decHunger);
         dec_hung.setOnClickListener(this);
@@ -68,7 +82,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         inc_coins = (Button) findViewById(R.id.incCoin);
         inc_coins.setOnClickListener(this);
         dec_coins = (Button) findViewById(R.id.decCoin);
-        dec_coins.setOnClickListener(this);
+        dec_coins.setOnClickListener(this);*/
 
         mainImg = (ImageView) findViewById(R.id.main_image);
 
@@ -76,6 +90,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         txt_status = (TextView) findViewById(R.id.txt_status);
         txt_stats = (TextView) findViewById(R.id.statsView);
         txt_coins = (TextView) findViewById(R.id.coins);
+        time = (TextView) findViewById(R.id.time);
 
         Intent intent = getIntent();
         type = (String)getIntent().getSerializableExtra("choice");
@@ -83,18 +98,19 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         // Check if character is born or not. If not, this is new character and must be birthed
         DBHandler db = new DBHandler(this);
         InventoryDB idb = new InventoryDB(this);
-        if(!db.IsBorn() && db.isAlive()){
-            db.setColumnType(type);
+        if(db.isAlive() && !db.IsBorn()){ // new birth
             idb.resetInventory();
+            db.setColumnType(type);
+            String cDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(new Date());
+            db.setColumnBirthdate(cDate);
+            db.setColumnLastUpdate(cDate);
         } else if (!db.isAlive()){
             alive = false;
             goDeathScreen();
         }
         alive = true;
-        doingBad = false;
         displayTitle(type);
         update();
-        //gameLoop();
     }
 
     @Override
@@ -124,7 +140,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             case(R.id.trainSelect):
                 selTrain();
                 break;
-            case (R.id.incHunger):
+            case(R.id.update):
+                update();
+                break;
+            /*case (R.id.incHunger):
                 incHung();
                 break;
             case (R.id.decHunger):
@@ -147,7 +166,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case (R.id.decCoin):
                 decCoin();
-                break;
+                break;*/
         }
     }
 
@@ -160,10 +179,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             txt_title.setText("ZENMAGOTCHI");
     }
 
-    public void displayStats(int level, int happy, int hunger, int discipline, int training, int needXp){
-        String stats = happy + "/200\n" +
-                hunger + "/200\n" +
-                discipline + "/200\n" +
+    public void displayStats(int level, int happy, int hunger, int maxHunger, int discipline, int maxDiscipline, int training, int needXp){
+        String stats = happy + "\n" +
+                hunger + "/" + maxHunger + "\n" +
+                discipline + "/" + maxDiscipline + "\n" +
                 training + "/" + needXp +"\n" +
                 level;
 
@@ -172,7 +191,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void updateStatus(String mood, String status){
         if(type.equalsIgnoreCase("LEE")){
-            if(mood.equalsIgnoreCase("HAPPY")) {
+            if(mood.equalsIgnoreCase("POTTY")){
+                mainImg.setImageResource(R.drawable.leestinky);
+            }else if(mood.equalsIgnoreCase("BAD")){
+                mainImg.setImageResource(R.drawable.leeupset);
+            }else if(mood.equalsIgnoreCase("HAPPY")) {
                 mainImg.setImageResource(R.drawable.leehappy);
             }else if(mood.equalsIgnoreCase("NORMAL")) {
                 mainImg.setImageResource(R.drawable.leenormal);
@@ -180,7 +203,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 mainImg.setImageResource(R.drawable.leeupset);
             }
         } else if (type.equalsIgnoreCase("DANA")){
-            if(mood.equalsIgnoreCase("HAPPY")) {
+            if(mood.equalsIgnoreCase("POTTY")){
+                mainImg.setImageResource(R.drawable.danastinky);
+            }else if(mood.equalsIgnoreCase("BAD")){
+                mainImg.setImageResource(R.drawable.danaupset);
+            }else if(mood.equalsIgnoreCase("HAPPY")) {
                 mainImg.setImageResource(R.drawable.danahappy);
             }else if(mood.equalsIgnoreCase("NORMAL")) {
                 mainImg.setImageResource(R.drawable.dananormal);
@@ -188,7 +215,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 mainImg.setImageResource(R.drawable.danaupset);
             }
         } else {
-            if(mood.equalsIgnoreCase("HAPPY")) {
+            if(mood.equalsIgnoreCase("POTTY")){
+                mainImg.setImageResource(R.drawable.zenstinky);
+            }else if(mood.equalsIgnoreCase("BAD")){
+                mainImg.setImageResource(R.drawable.zenupset);
+            }else if(mood.equalsIgnoreCase("HAPPY")) {
                 mainImg.setImageResource(R.drawable.zenhappy);
             }else if(mood.equalsIgnoreCase("NORMAL")) {
                 mainImg.setImageResource(R.drawable.zennormal);
@@ -203,14 +234,70 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         DBHandler db = new DBHandler(this);
         InventoryDB idb = new InventoryDB(this);
 
+        // Compare the last saved time in the database, then update pet accordingly and save the current time
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
+        String lDate = db.getColumnLastUpdate();
+        String cDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(new Date());
+        LocalDateTime d1 = LocalDateTime.parse(lDate, formatter);
+        LocalDateTime d2 = LocalDateTime.parse(cDate, formatter);
+        long minDiff = ChronoUnit.MINUTES.between(d2, d1);
+        if(minDiff < 0)
+            minDiff = -minDiff;
+        String t = "Minutes since last update: " + minDiff;
+        time.setText(t);
+
+        // Update if its been at least 10 min since last update
+        // 1 hunger is lost for every 10 minutes since the last update
+        // 2 gold is gained for every 10 minutes since the last update
+        // 1 potty is gained for every 10 minutes since the last update
+        // 1 discipline is lost for every 20 minutes. If hunger is low, 1 is lost for every 10 instead
+        String name = type.substring(0,1).toUpperCase() + type.substring(1).toLowerCase();
+        int hunger = db.getColumnHunger();
+        if (minDiff>10){
+            int amount = ((int)minDiff)/10;
+            db.feed(-amount);
+            idb.addCoins(amount*2);
+            db.incPotty(amount);
+            db.setColumnLastUpdate(cDate);
+            if(hunger < 0)
+                db.discipline(-amount*4);
+            else if(hunger - amount < 0){
+                int amount2 = Math.abs(hunger-amount);
+                db.discipline(-amount2*5);
+                db.discipline(-(amount-amount2));
+            } else if(hunger < 50)
+                db.discipline(-amount);
+            else if(hunger - amount < 50){
+                int amount2 = 50 - (hunger - amount);
+                db.discipline(amount2);
+                db.discipline((amount - 50) / 2);
+            }else
+                db.discipline(amount/2);
+
+            // Return message
+            AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+            builder.setTitle("Welcome back!");
+            builder.setMessage("While you were gone, " + name + " made " + (amount*2) + " coins!");
+            builder.setCancelable(true);
+            builder.setPositiveButton("Thanks!", (DialogInterface.OnClickListener) (dialog, which) -> {
+                dialog.cancel();
+            });
+            // Create the Alert dialog
+            AlertDialog alertDialog = builder.create();
+            // Show the Alert Dialog box
+            alertDialog.show();
+        }
+
         int happy;
         int level = db.getColumnLevel();
-        int hunger = db.getColumnHunger();
+        hunger = db.getColumnHunger();
+        int maxHunger = db.getColumnMaxHunger();
         int discipline = db.getColumnDiscipline();
+        int maxDiscipline = db.getColumnMaxDiscipline();
         int training = db.getColumnTraining();
         int needXp = db.getColumnNeedXp();
+        int toilet = db.getColumnPotty();
         String coins = Integer.toString(idb.getCoin());
-        String name = type.substring(0,1).toUpperCase() + type.substring(1).toLowerCase();
 
         // Calculate happiness and instant kill pet if less than 1
         happy = (hunger + discipline) / 2;
@@ -218,21 +305,45 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if(happy < 1)
             kill(false);
 
+        // First check potty, if that is high then potty mode
         String mood = "";
         String status = "";
-        if(happy >= 150){
-            mood = "HAPPY";
-            status = name + " is very happy!";
-        } else if (happy <= 50){
-            mood = "UPSET";
-            status = name + " is upset...";
-        }else{
-            mood = "NORMAL";
-            status = name + " is ok.";
+        if(toilet >= 50) {
+            mood = "POTTY";
+            if (toilet >= 100) {
+                // poop everywhere
+                db.setColumnMess("YES");
+                db.setColumnBad(true);
+                status = name + " pooped everywhere!";
+            } else {
+                // Depending on discipline, either "needs to use potty" or poop everywhere
+                if (discipline >= 100) {
+                    status = name + " needs to use the potty...";
+                    db.setColumnMess("NO");
+                } else {
+                    db.setColumnMess("YES");
+                    db.setColumnBad(true);
+                    status = name + " pooped everywhere!";
+                }
+            }
+        }else if(db.getColumnBad()){ // set status to bad if they bad
+            mood = "BAD";
+            status = name + " is acting up...";
+        }else{ // Find mood from happiness
+            if(happy >= 150){
+                mood = "HAPPY";
+                status = name + " is very happy!";
+            } else if (happy <= 50){
+                mood = "UPSET";
+                status = name + " is upset...";
+            }else{
+                mood = "NORMAL";
+                status = name + " is ok.";
+            }
         }
 
         txt_coins.setText(coins);
-        displayStats(level, happy, hunger, discipline, training, needXp);
+        displayStats(level, happy, hunger, maxHunger, discipline, maxDiscipline, training, needXp);
         updateStatus(mood, status);
     }
 
@@ -245,6 +356,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 attempt = idb.useFood();
                 if(attempt){
                     db.feed(10);
+                    db.incPotty(5);
                     Toast.makeText(GameActivity.this, "You fed 1 jelly bean", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 jelly bean", Toast.LENGTH_SHORT).show();
@@ -254,6 +366,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 attempt = idb.useBigFood();
                 if(attempt){
                     db.feed(50);
+                    db.incPotty(20);
                     Toast.makeText(GameActivity.this, "You fed 1 McNuggets", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 McNuggets", Toast.LENGTH_SHORT).show();
@@ -269,11 +382,12 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         DBHandler db = new DBHandler(this);
         InventoryDB idb = new InventoryDB(this);
         boolean attempt;
+        boolean levelUp = false;
         switch(strain){
             case(1):
                 attempt = idb.useGaming();
                 if(attempt){
-                    db.train(20);
+                    levelUp = db.train(20);
                     Toast.makeText(GameActivity.this, "You trained with a gaming device", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 gaming device", Toast.LENGTH_SHORT).show();
@@ -283,8 +397,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 attempt = idb.useDesert();
                 if(attempt){
                     int food = db.getColumnHunger();
-                    food = food / 10;
-                    db.train(food);
+                    int maxFood = db.getColumnMaxHunger();
+                    food = (food / 10) + (maxFood/10);
+                    levelUp = db.train(food);
                     Toast.makeText(GameActivity.this, "You caked up", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 cake", Toast.LENGTH_SHORT).show();
@@ -294,8 +409,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 attempt = idb.useChoker();
                 if(attempt){
                     int dis = db.getColumnDiscipline();
-                    dis = dis / 10;
-                    db.train(dis);
+                    int maxDis = db.getColumnMaxDiscipline();
+                    dis = (dis / 10) + (maxDis / 10);
+                    levelUp = db.train(dis);
                     Toast.makeText(GameActivity.this, "Choking was successful ;)", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 choker", Toast.LENGTH_SHORT).show();
@@ -305,8 +421,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                 attempt = idb.useMeme();
                 if(attempt){
                     int happy = db.getColumnHappy();
-                    happy = happy / 5;
-                    db.train(happy);
+                    int maxDis = db.getColumnMaxDiscipline();
+                    int maxFood = db.getColumnMaxHunger();
+                    happy = (happy / 5) + (((maxDis+maxFood)/2)/10);
+                    levelUp = db.train(happy);
                     Toast.makeText(GameActivity.this, "You shared an epic meme", Toast.LENGTH_SHORT).show();
                 }else{
                     Toast.makeText(GameActivity.this, "You have 0 funny", Toast.LENGTH_SHORT).show();
@@ -316,6 +434,33 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 Toast.makeText(GameActivity.this, "NO TRAINING SELECTED?", Toast.LENGTH_SHORT).show();
         }
+        if(levelUp)
+            levelUp();
+        update();
+    }
+
+    public void levelUp(){
+        DBHandler db = new DBHandler(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+        builder.setTitle("Level up!");
+        builder.setMessage("Choose a stat to increase!");
+        builder.setCancelable(false);
+        builder.setPositiveButton("Hunger", (DialogInterface.OnClickListener) (dialog, which) -> {
+            int max = db.getColumnMaxHunger();
+            max+=5;
+            db.feed(20);
+            db.setColumnMaxHunger(max);
+        });
+        builder.setNegativeButton("Discipline", (DialogInterface.OnClickListener) (dialog, which) -> {
+            int max = db.getColumnMaxDiscipline();
+            max+=5;
+            db.discipline(20);
+            db.setColumnMaxDiscipline(max);
+        });
+        // Create the Alert dialog
+        AlertDialog alertDialog = builder.create();
+        // Show the Alert Dialog box
+        alertDialog.show();
         update();
     }
 
@@ -351,7 +496,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     return true;
                 case(R.id.opTrain2):
                     strain = 2;
-                    Toast.makeText(GameActivity.this, "You selected Desert", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GameActivity.this, "You selected Cake", Toast.LENGTH_SHORT).show();
                     return true;
                 case(R.id.opTrain3):
                     strain = 3;
@@ -361,6 +506,11 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
                     strain = 4;
                     Toast.makeText(GameActivity.this, "You selected Epic Meme", Toast.LENGTH_SHORT).show();
                     return true;
+                case(R.id.killConfirm):
+                    kill(false);
+                    return true;
+                case(R.id.noKill):
+                    Toast.makeText(GameActivity.this, "You have spared them for now...", Toast.LENGTH_SHORT).show();
                 default:
                     return false;
             }
@@ -368,15 +518,35 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     };
 
     public void scold(){
+        DBHandler db = new DBHandler(this);
+        boolean doingBad = db.getColumnBad();
         if(doingBad){
             // They will be scolding properly and increase discipline
+            db.discipline(20);
+            db.setColumnBad(false);
+            Toast.makeText(GameActivity.this, "You properly told them to fuck off", Toast.LENGTH_SHORT).show();
         } else{
             // They are not properly scolded and lose discipline
+            db.discipline(-20);
+            Toast.makeText(GameActivity.this, "Bad timing! Now they're even more pissed!", Toast.LENGTH_SHORT).show();
         }
+        update();
     }
 
     public void toilet(){
-
+        DBHandler db = new DBHandler(this);
+        int toilet = db.getColumnPotty();
+        String mess = db.getColumnMess();
+        if(toilet>=50){
+            db.setColumnPotty(0);
+            if(mess.equalsIgnoreCase("YES")){
+                db.discipline(10);
+                db.setColumnMess("NO");
+            }else{
+                db.discipline(20);
+            }
+        }
+        update();
     }
 
     public void shop(){
@@ -386,11 +556,18 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void kill(boolean confirm){
-        if(confirm)
-            confirm = false;
+        if(confirm) {
+            PopupMenu popup = new PopupMenu(this, btn_kill);
+            popup.getMenuInflater().inflate(R.menu.kill_menu, popup.getMenu());
+            popup.setOnMenuItemClickListener(menuClickListener);
+            popup.show();
+        }
 
         if(!confirm){
             DBHandler db = new DBHandler(this);
+            String cDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(new Date());
+            db.setColumnDeathdate(cDate);
+
             alive = false;
             db.Kill();
             goDeathScreen();
@@ -403,14 +580,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intentDeath);
     }
 
-    public void gameLoop(){
-        while(alive){
-            update();
-        }
-    }
-
     // Admin functions
-    public void incHung(){
+    /*public void incHung(){
         DBHandler db = new DBHandler(this);
         int amount = db.getColumnHunger();
         amount += 10;
@@ -442,7 +613,9 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
     public void incTrain(){
         DBHandler db = new DBHandler(this);
-        db.train(10);
+        boolean attempt = db.train(10);
+        if(attempt)
+            levelUp();
         update();
     }
     public void decTrain(){
@@ -462,7 +635,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         InventoryDB idb = new InventoryDB(this);
         idb.spendCoins(10);
         update();
-    }
+    }*/
 
 
 }

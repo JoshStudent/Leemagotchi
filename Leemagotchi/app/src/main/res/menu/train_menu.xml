@@ -9,7 +9,7 @@
 
     <item
         android:id="@+id/opTrain2"
-        android:title="Desert"
+        android:title="Cake"
         app:showAsAction="ifRoom"
         />
 

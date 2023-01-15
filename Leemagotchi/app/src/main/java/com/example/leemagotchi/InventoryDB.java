@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class InventoryDB extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "inv.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
     private static final String TABLE_NAME = "invList";
-    private static final String COLUMN_TYPE = "type";
+    private static final String COLUMN_SLOT = "slot";
     private static final String COLUMN_FOOD = "food";
     private static final String COLUMN_BIG_FOOD = "bigFood";
     private static final String COLUMN_GAMING = "gaming";
@@ -26,7 +26,7 @@ public class InventoryDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String create_table_cmd = "CREATE TABLE " + TABLE_NAME +
-                "(" + COLUMN_TYPE + " TEXT PRIMARY KEY, " +
+                "(" + COLUMN_SLOT + " TEXT PRIMARY KEY, " +
                 COLUMN_FOOD + " TEXT, " +
                 COLUMN_BIG_FOOD + " TEXT, " +
                 COLUMN_GAMING + " TEXT, " +
@@ -37,7 +37,11 @@ public class InventoryDB extends SQLiteOpenHelper {
 
         db.execSQL(create_table_cmd);
 
-        String query = "INSERT INTO "+TABLE_NAME+" VALUES('INVENTORY','0','0','0','0','0','0','100')";
+        String query = "INSERT INTO "+TABLE_NAME+" VALUES('1','0','0','0','0','0','0','100')";
+        db.execSQL(query);
+        query = "INSERT INTO "+TABLE_NAME+" VALUES('2','0','0','0','0','0','0','100')";
+        db.execSQL(query);
+        query = "INSERT INTO "+TABLE_NAME+" VALUES('3','0','0','0','0','0','0','100')";
         db.execSQL(query);
     }
 
@@ -47,29 +51,29 @@ public class InventoryDB extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void resetInventory(){
+    public void resetInventory(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"=50";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"=50" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
-        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME+"=0";
+        query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME+"=0" + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
     }
 
-    public int getCoin() {
+    public int getCoin(int slot) {
         SQLiteDatabase db = this.getReadableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_COIN+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_COIN+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -79,31 +83,31 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public void addCoins(int amount){
+    public void addCoins(int amount, int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int coin = getCoin();
+        int coin = getCoin(slot);
         coin += amount;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"='"+coin+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"='"+coin+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
     }
 
-    public boolean spendCoins(int amount){
+    public boolean spendCoins(int amount, int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int coin = getCoin();
+        int coin = getCoin(slot);
         coin -= amount;
         if(coin < 0){
             return false;
         }
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"='"+coin+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_COIN+"='"+coin+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         return true;
     }
 
-    public int getFood() {
+    public int getFood(int slot) {
         SQLiteDatabase db = this.getReadableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_FOOD+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_FOOD+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -113,36 +117,36 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyFood(){
+    public boolean buyFood(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(10);
+        boolean bought = spendCoins(10,slot);
         if(!bought)
             return false;
 
-        int item = getFood();
+        int item = getFood(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useFood(){
+    public boolean useFood(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getFood();
+        int item = getFood(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_FOOD+"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public int getBigFood() {
+    public int getBigFood(int slot) {
         SQLiteDatabase db = this.getWritableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_BIG_FOOD+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_BIG_FOOD+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -152,36 +156,36 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyBigFood(){
+    public boolean buyBigFood(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(50);
+        boolean bought = spendCoins(50,slot);
         if(!bought)
             return false;
 
-        int item = getBigFood();
+        int item = getBigFood(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useBigFood(){
+    public boolean useBigFood(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getBigFood();
+        int item = getBigFood(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_BIG_FOOD +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public int getGaming() {
+    public int getGaming(int slot) {
         SQLiteDatabase db = this.getWritableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_GAMING+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_GAMING+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -191,36 +195,36 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyGaming(){
+    public boolean buyGaming(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(10);
+        boolean bought = spendCoins(10,slot);
         if(!bought)
             return false;
 
-        int item = getGaming();
+        int item = getGaming(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useGaming(){
+    public boolean useGaming(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getGaming();
+        int item = getGaming(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_GAMING +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public int getDesert() {
+    public int getDesert(int slot) {
         SQLiteDatabase db = this.getWritableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_DESERT+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_DESERT+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -230,36 +234,36 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyDesert(){
+    public boolean buyDesert(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(25);
+        boolean bought = spendCoins(25,slot);
         if(!bought)
             return false;
 
-        int item = getDesert();
+        int item = getDesert(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useDesert(){
+    public boolean useDesert(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getDesert();
+        int item = getDesert(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_DESERT +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public int getChoker() {
+    public int getChoker(int slot) {
         SQLiteDatabase db = this.getWritableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_CHOKER+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_CHOKER+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -269,36 +273,36 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyChoker(){
+    public boolean buyChoker(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(25);
+        boolean bought = spendCoins(25,slot);
         if(!bought)
             return false;
 
-        int item = getChoker();
+        int item = getChoker(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useChoker(){
+    public boolean useChoker(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getChoker();
+        int item = getChoker(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_CHOKER +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public int getMeme() {
+    public int getMeme(int slot) {
         SQLiteDatabase db = this.getWritableDatabase();
         String pre ="";
-        String query = "SELECT "+COLUMN_MEME+" FROM "+TABLE_NAME;
+        String query = "SELECT "+COLUMN_MEME+" FROM "+TABLE_NAME + " WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         Cursor cursor = db.rawQuery(query,null);
         if (cursor.getCount()>=1 && cursor.moveToFirst()){
             pre = cursor.getString(0);
@@ -308,27 +312,27 @@ public class InventoryDB extends SQLiteOpenHelper {
         return out;
     }
 
-    public boolean buyMeme(){
+    public boolean buyMeme(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        boolean bought = spendCoins(50);
+        boolean bought = spendCoins(50,slot);
         if(!bought)
             return false;
 
-        int item = getMeme();
+        int item = getMeme(slot);
         item++;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;
     }
 
-    public boolean useMeme(){
+    public boolean useMeme(int slot){
         SQLiteDatabase db = this.getWritableDatabase();
-        int item = getMeme();
+        int item = getMeme(slot);
         item--;
         if(item < 0)
             return false;
-        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME +"='"+item+"'";
+        String query = "UPDATE "+TABLE_NAME+" SET "+COLUMN_MEME +"='"+item+"'+ WHERE " + COLUMN_SLOT + " EQUALS '" + slot + "'";
         db.execSQL(query);
         db.close();
         return true;

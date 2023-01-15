@@ -14,13 +14,12 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
     Button buyFood, buyBigFood, buyGaming, buyDesert, buyChoker, buyMeme, back;
     TextView coins;
     String type;
+    int slot;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop);
-        Intent intent = getIntent();
-        type = (String)getIntent().getSerializableExtra("choice");
 
         back = (Button) findViewById(R.id.btn_back);
         back.setOnClickListener(this);
@@ -36,8 +35,10 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
         buyChoker.setOnClickListener(this);
         buyMeme = (Button) findViewById(R.id.buyMeme);
         buyMeme.setOnClickListener(this);
-
         coins = (TextView) findViewById(R.id.coins);
+
+        Intent intent = getIntent();
+        slot = Integer.parseInt((String)getIntent().getSerializableExtra("slot"));
 
         displayCoins();
     }
@@ -71,19 +72,20 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void back(){
         Intent intentGame = new Intent(this, GameActivity.class);
-        intentGame.putExtra("choice", type);
+        intentGame.putExtra("slot", slot);
         startActivity(intentGame);
+        finish();
     }
 
     public void displayCoins(){
         InventoryDB idb = new InventoryDB(this);
-        String amount = Integer.toString(idb.getCoin());
+        String amount = Integer.toString(idb.getCoin(slot));
         coins.setText(amount);
     }
 
     public void buyFood(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyFood();
+        boolean attempt = idb.buyFood(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else
@@ -93,7 +95,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void buyBigFood(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyBigFood();
+        boolean attempt = idb.buyBigFood(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else
@@ -103,7 +105,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void buyGaming(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyGaming();
+        boolean attempt = idb.buyGaming(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else
@@ -113,7 +115,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void buyDesert(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyDesert();
+        boolean attempt = idb.buyDesert(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else
@@ -123,7 +125,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void buyChoker(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyChoker();
+        boolean attempt = idb.buyChoker(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else
@@ -133,7 +135,7 @@ public class ShopActivity extends AppCompatActivity implements View.OnClickListe
 
     public void buyMeme(){
         InventoryDB idb = new InventoryDB(this);
-        boolean attempt = idb.buyMeme();
+        boolean attempt = idb.buyMeme(slot);
         if(!attempt)
             Toast.makeText(ShopActivity.this, "You have no moneys", Toast.LENGTH_SHORT).show();
         else

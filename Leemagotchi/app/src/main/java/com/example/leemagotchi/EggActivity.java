@@ -11,9 +11,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class EggActivity extends AppCompatActivity implements View.OnClickListener {
     Button btn_zen, btn_dana, btn_lee, btn_help;
     TextView mainText;
+    int slot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,44 +32,52 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         mainText = (TextView) findViewById(R.id.textView);
 
+        slot = Integer.parseInt((String)getIntent().getSerializableExtra("slot"));
+
         // Check if character is born or not. If so, immediately go to game activity
         DBHandler db = new DBHandler(this);
-        if(db.IsBorn()){
-            String type = db.getColumnType();
-            startGame(type);
+        if(db.IsBorn(slot)){
+            String type = db.getColumnType(slot);
+            startGame();
         }
     }
 
     @Override
     public void onClick(View view) {
+        DBHandler db = new DBHandler(this);
         switch (view.getId()){
             case (R.id.btn_lee):
-                startGame("lee");
+                db.newChar(slot, "LEE");
                 break;
             case (R.id.btn_zen):
-                startGame("zen");
+                db.newChar(slot, "ZEN");
                 break;
             case (R.id.btn_dana):
-                startGame("dana");
+                db.newChar(slot, "DANA");
                 break;
             case (R.id.help):
                 help();
         }
     }
 
-    public void startGame(String choice){
-        Intent intentGame = new Intent(this, GameActivity.class);
-        intentGame.putExtra("choice", choice);
-        startActivity(intentGame);
+    public void startGame(){
+        if(slot < 1 || slot > 3){
+            Toast.makeText(EggActivity.this, "Slot error", Toast.LENGTH_SHORT).show();
+        }else{
+            Intent intentGame = new Intent(this, GameActivity.class);
+            intentGame.putExtra("slot", slot);
+            startActivity(intentGame);
+            finish();
+        }
     }
 
     public void help(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(EggActivity.this);
         builder.setTitle("Uhmmmm");
         builder.setMessage("You noob??");
         builder.setCancelable(true);
         builder.setPositiveButton("ye :(", (DialogInterface.OnClickListener) (dialog, which) -> {
-            Toast.makeText(MainActivity.this, "LOL NOOB!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EggActivity.this, "LOL NOOB!!", Toast.LENGTH_SHORT).show();
             dialog.cancel();
         });
         // Create the Alert dialog
@@ -76,5 +85,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Show the Alert Dialog box
         alertDialog.show();
     }
-
 }

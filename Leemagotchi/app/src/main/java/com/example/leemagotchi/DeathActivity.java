@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +21,7 @@ public class DeathActivity extends AppCompatActivity implements View.OnClickList
     ImageView mainImg;
     TextView txt_status, txt_stats;
     String type;
+    int slot;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,13 +35,13 @@ public class DeathActivity extends AppCompatActivity implements View.OnClickList
         txt_stats = (TextView) findViewById(R.id.statsView);
 
         Intent intent = getIntent();
-        type = (String)getIntent().getSerializableExtra("choice");
+        slot = Integer.parseInt((String)getIntent().getSerializableExtra("slot"));
 
         //Compare birth and death date to see how long the pet lasted for
         DBHandler db = new DBHandler(this);
         String name = type.substring(0,1).toUpperCase() + type.substring(1).toLowerCase();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss a");
-        String lDate = db.getColumnLastUpdate();
+        String lDate = db.getColumnLastUpdate(slot);
         String cDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss a").format(new Date());
         LocalDateTime d1 = LocalDateTime.parse(lDate, formatter);
         LocalDateTime d2 = LocalDateTime.parse(cDate, formatter);
@@ -47,14 +49,14 @@ public class DeathActivity extends AppCompatActivity implements View.OnClickList
         String status = "Your " + name + " lasted for " + dayDiff + " days.";
         txt_status.setText(status);
 
-        int happy = db.getColumnHappy();
-        int level = db.getColumnLevel();
-        int hunger = db.getColumnHunger();
-        int maxHunger = db.getColumnMaxHunger();
-        int discipline = db.getColumnDiscipline();
-        int maxDiscipline = db.getColumnMaxDiscipline();
-        int training = db.getColumnTraining();
-        int needXp = db.getColumnNeedXp();
+        int happy = db.getColumnHappy(slot);
+        int level = db.getColumnLevel(slot);
+        int hunger = db.getColumnHunger(slot);
+        int maxHunger = db.getColumnMaxHunger(slot);
+        int discipline = db.getColumnDiscipline(slot);
+        int maxDiscipline = db.getColumnMaxDiscipline(slot);
+        int training = db.getColumnTraining(slot);
+        int needXp = db.getColumnNeedXp(slot);
         String stats = happy + "\n" +
                 hunger + "/" + maxHunger + "\n" +
                 discipline + "/" + maxDiscipline + "\n" +
@@ -78,8 +80,9 @@ public class DeathActivity extends AppCompatActivity implements View.OnClickList
 
     public void restart(){
         DBHandler db = new DBHandler(this);
-        db.restart();
-        Intent intentMain = new Intent(this, MainActivity.class);
+        db.setUnborn(slot);
+        Intent intentMain = new Intent(this, StartActivity.class);
         startActivity(intentMain);
+        finish();
     }
 }
